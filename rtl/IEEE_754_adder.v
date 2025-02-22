@@ -1,6 +1,6 @@
-// author - ADITYA VIKRAM SINGH
+// author - ADITYA VIKRAM SINGH, SHIVA SHANKAR B
 //created  - January 30, 2025
-
+//
 
 module IEEE_754_adder(
     input [31:0] in1,
