@@ -6,7 +6,6 @@ module proElement_tb;
     reg [31:0] w;
     reg [31:0] x_in;
     reg [31:0] b;
-    reg [9:0] count;
     reg head;
     reg clock;
     wire [31:0] pe_out;
@@ -17,7 +16,7 @@ module proElement_tb;
         .w(w),
         .x_in(x_in),
         .b(b),
-        .count(count),
+        .count(10'b0), // Unused in design, so set to 0
         .head(head),
         .clock(clock),
         .pe_out(pe_out),
@@ -27,69 +26,60 @@ module proElement_tb;
     // Clock generation (50MHz, period = 20ns)
     always #10 clock = ~clock;
 
-task header;
-    input [31:0] head_bit;
-    begin
-        @(negedge clock); // Wait for negative edge of clock
-        head = 1'b1;
-        x_in = head_bit;
+    // Task: Apply header signal to load `final_count`
+    task header;
+        input [31:0] head_bit;
+        begin
+            @(negedge clock);
+            head = 1'b1;
+            x_in = head_bit; // Assign count value when head is high
+            @(negedge clock);
+            head = 1'b0; // Deassert head after 1 clock cycle
+            x_in = 32'h3E800000;
+        end
+    endtask
 
-        @(negedge clock); // Wait for another negative edge
-        head = 1'b0;
-    end
-endtask
-
-task count_wx;
-	input [9:0] count;
-	begin
-		repeat(count)
-			@(negedge clock);
-			
-	end
-endtask
-
+    // Task: Provide input values for `count` clock cycles
+    task provide_inputs;
+        input [31:0] x_value;
+        input [31:0] w_value;
+        input [9:0] count; // Number of iterations
+        begin
+            repeat (count) begin
+                @(negedge clock);
+                x_in = x_value;
+                w = w_value;
+            end
+        end
+    endtask
 
     // Test procedure
     initial begin
-        // Enable waveform dump for GTKWave
-        $dumpfile("proElement_tb.vcd"); // Generates VCD file for GTKWave
-        $dumpvars(0, proElement_tb);    // Dump all variables in the testbench
+        // Enable waveform dump for GTKWave debugging
+        $dumpfile("proElement_tb.vcd"); 
+        $dumpvars(0, proElement_tb);    
         $dumpvars(1, proElement_tb.dut); 
         
         // Initialize signals
         clock = 0;
         head = 0;
+        w = 32'h3F000000;   // 0.5 in IEEE 754
+        x_in = 32'h3E800000; // 0.25 in IEEE 754
+        b = 32'h3F800000;    // 1.0 in IEEE 754
 
-        //header task is calle
-	
-	w = 32'h0000A011;
-	x_in = 32'h00000020;
-	b = 32'h5000AB11;
-	
-	header(32'h00000009);
-	count_wx(10'b0000001010);
+        // Apply header (sets `final_count`)
+        header(32'h00000009); // Set final count to 9
 
-        //w = 32'h3F800000; // 1.0 in IEEE 754
-        //x_in = 32'h40000000; // 2.0 in IEEE 754
-        //b = 32'h3F000000; // 0.5 in IEEE 754
-        count = 10;
+        // Provide inputs over `final_count` cycles
+        provide_inputs(32'h3E800000, 32'h3F000000, 9); // x = 0.25, w = 0.5, 9 iterations
 
+        // Wait until `done_flag` is asserted
+        wait (done_flag);
+        @(posedge clock); // Ensure final value is captured
 
-        // Monitor values
-        $monitor("Time=%0t | head=%b | count=%d | w=%h | x=%h | b=%h | pe_out=%h | done_flag=%b", 
-                 $time, head, count, w, x_in, b, pe_out, done_flag);
+        // Display final output
+        $display("Test Completed! Output: %h", pe_out);
 
-        // Apply reset condition
-        #20;
-        //head = 1; // Start computation
-        #20;
-        //head = 0;
-
-        // Wait for computation to finish
-       // wait(done_flag);
-        #200;
-
-        $display("Test Completed!");
         $finish;
     end
 
