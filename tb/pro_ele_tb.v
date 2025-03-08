@@ -39,6 +39,15 @@ task header;
     end
 endtask
 
+task count_wx;
+	input [9:0] count;
+	begin
+		repeat(count)
+			@(negedge clock);
+			
+	end
+endtask
+
 
     // Test procedure
     initial begin
@@ -50,13 +59,21 @@ endtask
         // Initialize signals
         clock = 0;
         head = 0;
-        
-	    header(32'h00000009);
 
-        w = 32'h3F800000; // 1.0 in IEEE 754
-        x_in = 32'h40000000; // 2.0 in IEEE 754
-        b = 32'h3F000000; // 0.5 in IEEE 754
+        //header task is calle
+	
+	w = 32'h0000A011;
+	x_in = 32'h00000020;
+	b = 32'h5000AB11;
+	
+	header(32'h00000009);
+	count_wx(10'b0000001010);
+
+        //w = 32'h3F800000; // 1.0 in IEEE 754
+        //x_in = 32'h40000000; // 2.0 in IEEE 754
+        //b = 32'h3F000000; // 0.5 in IEEE 754
         count = 10;
+
 
         // Monitor values
         $monitor("Time=%0t | head=%b | count=%d | w=%h | x=%h | b=%h | pe_out=%h | done_flag=%b", 
