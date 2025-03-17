@@ -12,6 +12,11 @@ module memory_512kb (
 );
     
     reg [31:0] memory [0:16383]; // 16K locations of 32-bit each
+
+    // Read data from hex file at startup
+    initial begin
+        $readmemh("../read_files/test_mem.hex", memory);
+    end
     
     always @(posedge clk or posedge rst) begin
         if (rst) begin
