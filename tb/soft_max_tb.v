@@ -19,21 +19,37 @@ module IEEE_754_softmax_tb;
 
     always #5 clk = ~clk; // Clock generation (10ns period)
 
-    initial begin
-        clk = 0;
+    task reset;
+    begin
         rst = 1;
         valid_in = 0;
         #10 rst = 0;
+    end
+    endtask
+
+    task apply_input(input [31:0] value);
+    begin
+        valid_in = 1;
+        data_in = value;
+        #10;
+    end
+    endtask
+
+    initial begin
+
+        $dumpfile("soft_max_tb.vcd"); 
+        $dumpvars(0, IEEE_754_softmax_tb);    
+        $dumpvars(1, IEEE_754_softmax_tb.uut); 
+        clk = 0;
+        reset();
 
         // Input values: { -1.2, 0.5, 2.0, 3.1 }
-        valid_in = 1;
-        data_in = 32'hBF99999A; #10; // -1.2
-        data_in = 32'h3F000000; #10; // 0.5
-        data_in = 32'h40000000; #10; // 2.0
-        data_in = 32'h404CCCCD; #10; // 3.1
+        apply_input(32'hBF99999A); // -1.2
+        apply_input(32'h3F000000); // 0.5
+        apply_input(32'h40000000); // 2.0
+        apply_input(32'h404CCCCD); // 3.1
 
         valid_in = 0;
-
         #100; // Wait for results
 
         $display("Softmax Output: %h", softmax_out);
