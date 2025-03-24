@@ -5,7 +5,7 @@ module pro_ele(
     input [31:0] w, // weights
     input [31:0] x_in, // input
     input [31:0] b, // bias
-    input [9:0] count, // counter for operation
+    //input [9:0] count, // counter for operation
     input head, // header signal
     input clock, // clock signal
     output reg [31:0] pe_out, // output of processing element
