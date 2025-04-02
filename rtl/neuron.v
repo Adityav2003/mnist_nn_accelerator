@@ -12,8 +12,8 @@ module neuron(
     input clock_neuron_in,
 
     //outputs
-    output reg [31:0] relu_out_neuron2node,
-    output reg relu_done_neuron2node
+    output wire [31:0] relu_out_neuron2node,
+    output wire relu_done_neuron2node
 
 
 );

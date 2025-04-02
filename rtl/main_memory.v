@@ -61,6 +61,7 @@ module main_memory_32k_x_32bit(
 
     // Memory array: 32KB (8K x 32-bit)
     reg [31:0] memory [0:32767];
+    integer i;
 
     initial begin
         $readmemh("../read_files/weights_biases_inp.hex", memory);
@@ -69,7 +70,7 @@ module main_memory_32k_x_32bit(
     always @(posedge clock_mem) begin
         if (rst) begin
             // Reset all memory and outputs to zero
-            integer i;
+            
             for (i = 0; i < 32767; i = i + 1) begin
                 memory[i] <= 32'd0;
             end
