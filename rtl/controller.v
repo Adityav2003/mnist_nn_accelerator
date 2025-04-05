@@ -139,17 +139,17 @@ always @ (posedge clock)
 begin
 	case (current_state)
 		
-		IDLE : begin
+		IDLE : begin //0
 			rd_en_c2mem = 1;
 			head_c2node = 1;
 			x_addr_c2mem = 16'h620a;
 			next_state = L1_IDLE;
 		end
 
-		L1_IDLE : begin
+		L1_IDLE : begin //1
 			rd_en_c2mem = 1;
 			head_c2node = 0;
-			if (done_flag_node2c == 1) begin
+			//if (done_flag_node2c == 0) begin
 
 				
 
@@ -183,14 +183,14 @@ begin
 				b9_addr_c2mem = b8_addr_c2mem + 16'h0001;
 				b10_addr_c2mem = b9_addr_c2mem + 16'h0001;
 
-				counter = 0;
+			//	counter = 0;
 
 				next_state = L1_S1_COMPUTE;
-			end
-			else next_state = L1_IDLE;
+			//end
+			//else next_state = L1_IDLE;
 		end
 
-		L1_S1_COMPUTE : begin
+		L1_S1_COMPUTE : begin //2
 			if(done_flag_node2c == 1) begin
 				data_select_c2node = 0;
 				next_state = L1_S1_STORE;
@@ -214,10 +214,11 @@ begin
 			
 		end
 
-		L1_S1_STORE : begin
+		L1_S1_STORE : begin //3
 			rd_en_c2mem = 0;
 			wr_en_c2mem = 1;
 			if(data_select_c2node == 4'b1010) begin
+				data_select_c2node = 0;
 				wr_en_c2mem = 0;
 				rd_en_c2mem = 1;
 				head_c2node = 1;
@@ -231,7 +232,10 @@ begin
 			end
 		end
 
-		L1_S2_COMPUTE : begin
+		L1_S2_COMPUTE : begin //4
+			head_c2node = 0;
+			rd_en_c2mem = 1;
+			wr_en_c2mem = 0;
 			if(done_flag_node2c == 1) begin
 				data_select_c2node = 0;
 				next_state = L1_S2_STORE;
@@ -254,13 +258,13 @@ begin
 			end
 		end
 
-		L1_S2_STORE : begin
+		L1_S2_STORE : begin //5
 			rd_en_c2mem = 0;
 			wr_en_c2mem = 1;
 			if(data_select_c2node == 4'b1010) begin
 				wr_en_c2mem = 0;
 				rd_en_c2mem = 1;
-				head_c2node = 1;
+				//head_c2node = 1;
 				x_addr_c2mem = 16'h620a; //intializing the count
 				next_state = L1_S3_COMPUTE;
 				
@@ -272,6 +276,9 @@ begin
 		end
 
 		L1_S3_COMPUTE : begin
+			head_c2node = 0;
+			rd_en_c2mem = 1;
+			wr_en_c2mem = 0;
 			if(done_flag_node2c == 1) begin
 				data_select_c2node = 0;
 				next_state = L1_S3_STORE;
@@ -290,7 +297,7 @@ begin
 				w8_addr_c2mem = w8_addr_c2mem + 1;
 				w9_addr_c2mem = w9_addr_c2mem + 1;
 				w10_addr_c2mem = w10_addr_c2mem + 1;
-				next_state = L1_S2_COMPUTE;
+				next_state = L1_S3_COMPUTE;
 			end
 		end
 
@@ -313,12 +320,16 @@ begin
 
 		L1_FINAL : begin
 			layer1_done = 1;
+			x_addr_c2mem = 16'h620b;
+
 			next_state = L2_IDLE;
+
 		end
 
 		L2_IDLE : begin
 			rd_en_c2mem = 1;
-			if (done_flag_node2c == 0) begin
+			head_c2node = 0;
+			//if (done_flag_node2c == 0) begin
 
 				
 
@@ -352,14 +363,17 @@ begin
 				b9_addr_c2mem = b8_addr_c2mem + 16'h0001;
 				b10_addr_c2mem = b9_addr_c2mem + 16'h0001;
 
-				counter = 0;
+				//counter = 0;
 
 				next_state = L2_S1_COMPUTE;
-			end
-			else next_state = L2_IDLE;
+			//end
+			//else next_state = L2_IDLE;
 		end
 
 		L2_S1_COMPUTE : begin
+			head_c2node = 0;
+			rd_en_c2mem = 1;
+			wr_en_c2mem = 0;
 			if(done_flag_node2c == 1) begin
 				data_select_c2node = 0;
 				next_state = L2_S1_STORE;
@@ -389,7 +403,7 @@ begin
 			if(data_select_c2node == 4'b1010) begin
 				wr_en_c2mem = 0;
 				rd_en_c2mem = 1;
-				head_c2node = 1;
+				//head_c2node = 1;
 				x_addr_c2mem = 16'h620b; //intializing the count 30
 				next_state = L2_S2_COMPUTE;
 				
@@ -401,6 +415,9 @@ begin
 		end
 
 		L2_S2_COMPUTE : begin
+			head_c2node = 0;
+			rd_en_c2mem = 1;
+			wr_en_c2mem = 0;
 			if(done_flag_node2c == 1) begin
 				data_select_c2node = 0;
 				next_state = L2_S2_STORE;
@@ -443,12 +460,14 @@ begin
 
 		L2_FINAL : begin
 			layer2_done = 1;
+			x_addr_c2mem = 16'h620c;
 			next_state = L3_IDLE;
 		end
 
 		L3_IDLE : begin
 			rd_en_c2mem = 1;
-			if (done_flag_node2c == 0) begin
+			head_c2node = 0;
+			//if (done_flag_node2c == 0) begin
 
 				
 
@@ -485,11 +504,14 @@ begin
 				counter = 0;
 
 				next_state = L3_COMPUTE;
-			end
-			else next_state = L3_IDLE;
+			//end
+			//else next_state = L3_IDLE;
 		end
 
 		L3_COMPUTE : begin
+			head_c2node = 0;
+			rd_en_c2mem = 1;
+			wr_en_c2mem = 0;
 			if(done_flag_node2c == 1) begin
 				data_select_c2node = 0;
 				next_state = L3_STORE;
@@ -520,7 +542,7 @@ begin
 			if(data_select_c2node == 4'b1010) begin
 				wr_en_c2mem = 0;
 				rd_en_c2mem = 1;
-				head_c2node = 1;
+				//head_c2node = 1;
 				x_addr_c2mem = 16'h620d; //intializing the count 20
 				next_state = SOFTMAX;
 				

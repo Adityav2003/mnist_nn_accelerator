@@ -1,7 +1,7 @@
 `timescale 1ns / 1ps
 `include "../rtl/controller.v"
 `include "../rtl/main_memory.v"
-`include "../rtl/neuron.v"
+`include "../rtl/node.v"
 
 module nn_accelerator_top(
     input clock,
@@ -16,6 +16,7 @@ module nn_accelerator_top(
     wire rd_en_c2mem;
     wire wr_en_c2mem;
     wire done_flag_node2c;
+    wire [31:0] wr_data;
 
     // Address wires
     wire [15:0] x_addr_c2mem;
@@ -57,7 +58,7 @@ module nn_accelerator_top(
         .clock_mem(clock),
         .rd_en(rd_en_c2mem),
         .wr_en(wr_en_c2mem),
-        .wr_data(32'b0),  // Default data for now
+        .wr_data(wr_data),  // Default data for now
         .x_addr(x_addr_c2mem),
         .w1_addr(w1_addr_c2mem), .w2_addr(w2_addr_c2mem), .w3_addr(w3_addr_c2mem),
         .w4_addr(w4_addr_c2mem), .w5_addr(w5_addr_c2mem), .w6_addr(w6_addr_c2mem),
@@ -74,15 +75,58 @@ module nn_accelerator_top(
         .b6_data(b6_data), .b7_data(b7_data), .b8_data(b8_data), .b9_data(b9_data), .b10_data(b10_data)
     );
 
-    // Neuron Instantiation
-    neuron NEUR (
-        .w_node2neuron(w1_data), // Example: using w1_data as input weight
-        .x_node2neuron(x_data),  // Using x_data as input
-        .b_node2neuron(b1_data), // Using b1_data as bias
-        .head_node2neuron(head_c2node),
-        .clock_neuron_in(clock),
-        .relu_out_neuron2node(values), // Output connected to top module
-        .relu_done_neuron2node(done_flag_node2c) // Done flag for controller
+    // // Neuron Instantiation
+    // neuron NEUR (
+    //     .w_node2neuron(w1_data), // Example: using w1_data as input weight
+    //     .x_node2neuron(x_data),  // Using x_data as input
+    //     .b_node2neuron(b1_data), // Using b1_data as bias
+    //     .head_node2neuron(head_c2node),
+    //     .clock_neuron_in(clock),
+    //     .relu_out_neuron2node(values), // Output connected to top module
+    //     .relu_done_neuron2node(done_flag_node2c) // Done flag for controller
+    // );
+
+    node NODE(
+    //inputs
+    .head_c2node(head_c2node), //head activate
+    .clock_node_in(clock),
+    
+    .x_mem2node(x_data), //input node
+
+    //weights
+    .w1_mem2node(w1_data), 
+    .w2_mem2node(w2_data), 
+    .w3_mem2node(w3_data), 
+    .w4_mem2node(w4_data), 
+    .w5_mem2node(w5_data), 
+    .w6_mem2node(w6_data), 
+    .w7_mem2node(w7_data), 
+    .w8_mem2node(w8_data), 
+    .w9_mem2node(w9_data), 
+    .w10_mem2node(w10_data), 
+
+    //bias
+    //weights
+    .b1_mem2node(b1_data), 
+    .b2_mem2node(b2_data), 
+    .b3_mem2node(b3_data), 
+    .b4_mem2node(b4_data), 
+    .b5_mem2node(b5_data), 
+    .b6_mem2node(b6_data), 
+    .b7_mem2node(b7_data), 
+    .b8_mem2node(b8_data), 
+    .b9_mem2node(b9_data), 
+    .b10_mem2node(b10_data), 
+
+    //mux selector
+    .data_sel_c2node(data_select_c2node),
+
+    //outputs
+
+    .data_node2mem(wr_data),
+    .done_flag_node2c(done_flag_node2c)
+
     );
+
 
 endmodule
