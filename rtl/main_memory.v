@@ -64,7 +64,7 @@ module main_memory_32k_x_32bit(
     integer i;
 
     initial begin
-        $readmemh("../read_files/weights_biases_inp.hex", memory);
+        $readmemh("../read_files/model_layers.hex", memory);
     end
 
     always @(posedge clock_mem) begin

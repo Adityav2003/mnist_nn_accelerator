@@ -31,6 +31,6 @@ module nn_accelerator_top_tb;
         // Apply test cases
         //#20 $monitor("Values Output: %h", values);
         
-        #5000 $finish; // End simulation after some time
+        #10000 $finish; // End simulation after some time
     end
 endmodule
