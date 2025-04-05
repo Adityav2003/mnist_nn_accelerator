@@ -12,7 +12,8 @@ module IEEE_754_softmax #(
 ) (
     input wire clk,
     input wire rst,
-    input wire valid_in,            // New data valid signal
+    input wire valid
+    _in,            // New data valid signal
     input wire [31:0] data_in,      // IEEE 754 floating-point input
     output wire [31:0] softmax_out, // Softmax output
     output wire valid_out           // Output valid flag

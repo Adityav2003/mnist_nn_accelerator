@@ -7,11 +7,12 @@ module relu(
 );
 
 	always @(posedge clock) begin
-		if(relu_valid) begin
+		if(relu_valid) begin //this is not correct
+			relu_done <= 1'b1;
 			if(relu_in[31] == 1'b1) relu_out <= 0;
 			else relu_out <= relu_in;
 
-			relu_done <= 1'b1;
+			
 		end
 	end
 

@@ -32,7 +32,7 @@ output reg [15:0] b9_addr_c2mem,
 output reg [15:0] b10_addr_c2mem
 );
 
-reg [1:0] current_state, next_state;
+reg [4:0] current_state, next_state;
 //parameters for the layers
 
 parameter IDLE = 5'd0;
@@ -93,10 +93,11 @@ reg [9:0] counter;
 always @(posedge clock) begin
 	if(rst) begin
 		current_state <= IDLE;
+		next_state <= IDLE;
 		layer1_done <= 0;
 		layer2_done <= 0;
 		layer3_done <= 0;
-		head_c2node <= 0;
+		head_c2node <= 0; //header bit
 		data_select_c2node <= 0;
 		rd_en_c2mem <= 0;
 		wr_en_c2mem <= 0;
@@ -147,7 +148,8 @@ begin
 
 		L1_IDLE : begin
 			rd_en_c2mem = 1;
-			if (done_flag_node2c == 0) begin
+			head_c2node = 0;
+			if (done_flag_node2c == 1) begin
 
 				
 
@@ -546,27 +548,6 @@ begin
 
 	endcase
 end
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

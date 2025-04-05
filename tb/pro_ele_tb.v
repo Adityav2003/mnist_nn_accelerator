@@ -16,7 +16,7 @@ module proElement_tb;
         .w(w),
         .x_in(x_in),
         .b(b),
-        .count(10'b0), // Unused in design, so set to 0
+        //.count(10'b0), // Unused in design, so set to 0
         .head(head),
         .clock(clock),
         .pe_out(pe_out),

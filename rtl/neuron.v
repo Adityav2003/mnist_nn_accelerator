@@ -37,7 +37,7 @@ module neuron(
                     .relu_done(relu_done_neuron2node)
                                             );
 
-
+    assign relu_done_neuron2node = done_flag_pe2relu;
 
 
 endmodule
