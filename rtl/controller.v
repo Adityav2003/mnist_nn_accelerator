@@ -571,8 +571,5 @@ begin
 	endcase
 end
 
-
-
-
 endmodule
 
