@@ -64,7 +64,7 @@ module main_memory_32k_x_32bit(
     integer i;
 
     initial begin
-        $readmemh("../read_files/model_layers.hex", memory);
+        $readmemh("../read_files/model_layers_9.hex", memory);
     end
 
     always @(posedge clock_mem) begin
