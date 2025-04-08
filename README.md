@@ -16,6 +16,10 @@ AI accelerators outperform traditional CPUs in three core areas:
 
 ![Neural Network Architecture](NN_model.png)
 
+## Dependencies
+- Iverilog
+- Gtkwave
+
 ## Neural Network Architecture
 
 This architecture defines a neural network designed for digit classification using the **MNIST dataset**. The model accepts a flattened 28×28 grayscale image as input and processes it through multiple layers to output probabilities for digits 0–9.
